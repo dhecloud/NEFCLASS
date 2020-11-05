@@ -62,28 +62,30 @@ def main(args):
     print(f'model learnt {model.get_num_rules()} rules')
     
     '''check accuracy after rule learning'''
-    correct = 0
-    for i, (r,t) in enumerate(zip(train_data,train_targets)):
-        # print(i)
-        output = model(r, t)
-        pred_class = output.index(max(output))
-        if pred_class == t:
-            correct +=1
-    print(f'Accuracy on training set after rule learning: {100*correct/len(train_data):.2f}%')
+    print(f'Accuracy on training set after rule learning: {check_accuracy(model, train_data, train_targets):.2f}%')
 
     
     '''fuzzy set learning'''
     print('start fuzzy set learning')
+    best_acc_epoch_pair = [-1,-1]
     for e in range(args.num_epoch):
         for i, (r,t) in enumerate(zip(train_data,train_targets)):
             output = model(r, t)
             delta = [1 - output[i] if i == t  else 0 - output[i] for i in range(len(output))]
             model.update_fuzzy_sets(args.sigma, delta)
+        epoch_acc = check_accuracy(model, train_data, train_targets)
+        if epoch_acc > best_acc_epoch_pair[0]:
+            best_acc_epoch_pair[0] = epoch_acc
+            best_acc_epoch_pair[1] = e
+        #early stopping
+        if e - best_acc_epoch_pair[1] > 10:
+            break
         if e % 5 == 0:
-            print(f'Epoch {e}: {check_accuracy(model, train_data, train_targets)}')
+            print(f'Epoch {e}: {epoch_acc}')
             # input()
+    print(f'Best accuracy {best_acc_epoch_pair[0]} at epoch {best_acc_epoch_pair[1]}')
     
-    print(f'Accuracy on test set after fuzzy set learning: {100*correct/len(test_data):.2f}%')
+    print(f'Accuracy on test set after fuzzy set learning: {check_accuracy(model, test_data, test_targets):.2f}%')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='NEFCLASS')
