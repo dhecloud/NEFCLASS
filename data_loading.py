@@ -1,6 +1,13 @@
 import os
 import pandas as pd
 import random 
+import numpy as  np
+
+def shuffle_idxs(length):
+    tmp =  list(range(length))
+    random.shuffle(tmp)
+    return tmp
+    
 
 def load_iris(args, path='data/iris.csv'):
     data = pd.read_csv(path)
@@ -11,12 +18,20 @@ def load_iris(args, path='data/iris.csv'):
     
     targets = data['class'].to_numpy()
     data = data[['SepalLengthCm','SepalWidthCm','PetalWidthCm']].to_numpy()
-    train_data, train_targets = data[0::2], targets[0::2]
-    test_data, test_targets = data[1::2], targets[1::2]
-    vars(args)['num_input_units'] = train_data.shape[1]
+    vars(args)['num_input_units'] = data.shape[1]
     vars(args)['output_units'] = len(class_mapping)
     
-    return train_data, train_targets, test_data, test_targets
+    if args.cv:
+        return data, targets, np.max(data,axis=0), np.min(data,axis=0)
+        
+    else:
+        train_data, train_targets = data[0::2], targets[0::2]
+        test_data, test_targets = data[1::2], targets[1::2]
+        return train_data, train_targets, test_data, test_targets, np.max(data,axis=0), np.min(data,axis=0)
+
+    
+    
+    
     
 
 def load_breast_cancer(args,path ='data/breast_cancer/'):
@@ -28,6 +43,8 @@ def load_breast_cancer(args,path ='data/breast_cancer/'):
         class_mapping[c] = len(class_mapping)    
     train_data['class_mapped'] = [class_mapping[c] for c in train_data['Class']]
     test_data['class_mapped'] = [class_mapping[c] for c in test_data['Class']]
+    vars(args)['num_input_units'] = train_data.shape[1]
+    vars(args)['output_units'] = len(class_mapping)
     
     train_targets = train_data['class_mapped'].to_numpy()
     train_data = train_data.drop(['class_mapped', 'Class'], axis=1).to_numpy()
@@ -41,7 +58,7 @@ def load_breast_cancer(args,path ='data/breast_cancer/'):
     vars(args)['num_input_units'] = train_data.shape[1]
     vars(args)['output_units'] = len(class_mapping)
     
-    return train_data, train_targets, test_data, test_targets
+    return train_data, train_targets, test_data, test_targets, np.max(train_data,axis=0), np.min(train_data,axis=0)
     
 def load_breast_cancer_wisconsin(args,path ='data/breast_cancer_wisconsin/'):
     
@@ -65,25 +82,27 @@ def load_breast_cancer_wisconsin(args,path ='data/breast_cancer_wisconsin/'):
         data[c]= data[c].replace('-9999999', max)
         
     
-    data[feature_cols] = data[feature_cols].astype(float)
-    train_idxs = random.sample(list(range(data.shape[0])), k=int(9*data.shape[0]/10))
-    test_idxs = [x not in train_idxs for x in list(range(data.shape[0])) ]
-    train_data, train_targets = data.loc[train_idxs, feature_cols].to_numpy(), data.loc[train_idxs, 'class_mapped'].to_numpy()
-    test_data, test_targets = data.loc[test_idxs, feature_cols].to_numpy(), data.loc[test_idxs, 'class_mapped'].to_numpy()
-
-    
-    
-    # test_targets = test_data['class_mapped'].to_numpy()
-    # test_data = test_data.drop(['class_mapped', 'Class'], axis=1).to_numpy()
-    # 
-    # 
-    assert train_data.shape[0] == train_targets.shape[0]
-    assert test_data.shape[0] == test_targets.shape[0]
-    # 
-    vars(args)['num_input_units'] = train_data.shape[1]
+    data[feature_cols] = data[feature_cols].astype(float) 
+    vars(args)['num_input_units'] = data.shape[1]
     vars(args)['output_units'] = len(class_mapping)
     
-    return train_data, train_targets, test_data, test_targets
+    if args.cv:
+        targets = data['class_mapped'].to_numpy()
+        data = data[feature_cols].to_numpy()
+        
+        return data, targets, np.max(data,axis=0), np.min(data,axis=0)
+        
+    else:
+        train_idxs = random.sample(list(range(data.shape[0])), k=int(9*data.shape[0]/10))
+        test_idxs = [x not in train_idxs for x in list(range(data.shape[0])) ]
+        train_data, train_targets = data.loc[train_idxs, feature_cols].to_numpy(), data.loc[train_idxs, 'class_mapped'].to_numpy()
+        test_data, test_targets = data.loc[test_idxs, feature_cols].to_numpy(), data.loc[test_idxs, 'class_mapped'].to_numpy()
+
+        
+        assert train_data.shape[0] == train_targets.shape[0]
+        assert test_data.shape[0] == test_targets.shape[0]
+        
+        return train_data, train_targets, test_data, test_targets, np.max(data,axis=0), np.min(data,axis=0)
 
 
 

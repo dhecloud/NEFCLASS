@@ -1,0 +1,15 @@
+Sigma:0.001, kmax:10, folds:10, Train: 60.74% Test: 33.33%
+Sigma:0.005, kmax:10, folds:10, Train: 59.26% Test: 33.33%
+Sigma:0.01, kmax:10, folds:10, Train: 59.26% Test: 33.33%
+Sigma:0.1, kmax:10, folds:10, Train: 55.56% Test: 26.67%
+Sigma:1.0, kmax:10, folds:10, Train: 35.56% Test: 13.33%
+Sigma:0.001, kmax:15, folds:10, Train: 67.41% Test: 53.33%
+Sigma:0.005, kmax:15, folds:10, Train: 88.15% Test: 80.00%
+Sigma:0.01, kmax:15, folds:10, Train: 88.89% Test: 86.67%
+Sigma:0.1, kmax:15, folds:10, Train: 83.70% Test: 80.00%
+Sigma:1.0, kmax:15, folds:10, Train: 62.22% Test: 66.67%
+Sigma:0.001, kmax:20, folds:10, Train: 67.41% Test: 53.33%
+Sigma:0.005, kmax:20, folds:10, Train: 88.89% Test: 86.67%
+Sigma:0.01, kmax:20, folds:10, Train: 93.33% Test: 100.00%
+Sigma:0.1, kmax:20, folds:10, Train: 83.70% Test: 86.67%
+Sigma:1.0, kmax:20, folds:10, Train: 65.93% Test: 53.33%

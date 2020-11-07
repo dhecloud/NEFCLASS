@@ -1,14 +1,23 @@
 import numpy as np
 
-def determine_membership(x,abc):
+def determine_membership(x,abc, max, min, type='tri'):
     assert(len(abc) ==3)
     a,b,c = abc
-    if x >= a and x <b:
+    if x <= min or x>= max:
+        return 1
+    if a<x and x <=b:
         return (x-a)/(b-a)
-    elif x>=b and x <= c:
+    elif b<x and x < c:
         return (c-x)/(c-b)
     else:
         return 0
+    
+    # if x < a or x > c:
+    #     return 0
+    # elif x >= a and x <= b:
+    #     return (b-x)/(b-a)
+    # elif x > b and x <= c:
+    #     return (x-a)/(c-b)
         
 
 
@@ -60,4 +69,4 @@ def _trimf(x, abc):
     return y
     
 if __name__ == '__main__':
-    _build_membership_function(np.linspace(-2, 2, 10),list('abcde'))
+    print(build_membership_function(np.linspace(-2, 2, 10),list('abcdefg')))
