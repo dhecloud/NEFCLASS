@@ -1,0 +1,5 @@
+Sigma:0.001, kmax:10, num_sets:3, Train: 76.32% Test: 77.35%
+Sigma:0.005, kmax:10, num_sets:3, Train: 76.47% Test: 77.35%
+Sigma:0.01, kmax:10, num_sets:3, Train: 76.47% Test: 77.35%
+Sigma:0.1, kmax:10, num_sets:3, Train: 76.47% Test: 77.35%
+Sigma:1.0, kmax:10, num_sets:3, Train: 76.47% Test: 77.35%

@@ -30,7 +30,36 @@ def load_iris(args, path='data/iris.csv'):
         return train_data, train_targets, test_data, test_targets, np.max(data,axis=0), np.min(data,axis=0)
 
     
+def load_wine(args,path ='data/wine/'):
+    feature_cols = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', \
+    'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol']
+    target_col = ['quality']
+
+    red_data = pd.read_csv(os.path.join(path,'winequality-red.csv'), sep=';')
+    white_data = pd.read_csv(os.path.join(path,'winequality-white.csv'),sep=';')
+    data = red_data.append(white_data)
+    classes = []
+    for c in data['quality']:
+        if c <= 4: #poor
+            classes.append(0)
+        elif c <= 6: #average
+            classes.append(1)
+        else:
+            classes.append(2)
+    data['class'] = classes
     
+    targets = data['class'].to_numpy()
+    data = data[feature_cols].to_numpy()
+    vars(args)['num_input_units'] = data.shape[1]
+    vars(args)['output_units'] = 3 #poor average excellent
+    
+    if args.cv:
+        return data, targets, np.max(data,axis=0), np.min(data,axis=0)
+        
+    else:
+        train_data, train_targets = data[0::2], targets[0::2]
+        test_data, test_targets = data[1::2], targets[1::2]
+        return train_data, train_targets, test_data, test_targets, np.max(data,axis=0), np.min(data,axis=0)
     
     
 

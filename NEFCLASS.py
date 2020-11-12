@@ -3,12 +3,13 @@ import numpy as np
 EPSILON = 0.0000001
 
 class NEFCLASS:
-    def __init__(self, num_input_units, num_fuzzy_sets, kmax, output_units, universe_max, universe_min):
-        self.input = _input_layer(num_input_units, num_fuzzy_sets, universe_max, universe_min)
+    def __init__(self, num_input_units, num_fuzzy_sets, kmax, output_units, universe_max, universe_min, membership_type):
+        self.input = _input_layer(num_input_units, num_fuzzy_sets, universe_max, universe_min,membership_type)
         self.rule = _rule_layer(kmax, output_units)
         self.output = _output_layer(output_units)
         self.universe_max = universe_max
         self.universe_min = universe_min
+        self.membership_type = membership_type
         
     def init_fuzzy_sets(self,abcs):
         self.input.init_abcs(abcs)
@@ -39,7 +40,7 @@ class NEFCLASS:
     def get_antecedents(self, x):
         m = []
         for i in range(len(x)): 
-            m.append([determine_membership(x[i], v, self.universe_max[i], self.universe_min[i]) for k, v in self.input.abcs[i].items()])
+            m.append([determine_membership(x[i], v, self.universe_max[i], self.universe_min[i], self.membership_type) for k, v in self.input.abcs[i].items()])
         
         ante = [mem.index(max(mem)) for mem in m]
         return m, ante
@@ -57,7 +58,7 @@ class NEFCLASS:
         
 
 class _input_layer:
-    def __init__(self,num_input_units, num_fuzzy_sets, universe_max, universe_min):
+    def __init__(self,num_input_units, num_fuzzy_sets, universe_max, universe_min, membership_type):
         self.num_fuzzy_sets =  num_fuzzy_sets
         self.num_input_units = num_input_units
         self.abcs = None
@@ -66,7 +67,7 @@ class _input_layer:
         self.last_input = None
         self.universe_max = universe_max
         self.universe_min = universe_min
-        
+        self.membership_type = membership_type
     def init_abcs(self,abcs):
         self.abcs = abcs
         
@@ -74,7 +75,7 @@ class _input_layer:
         self.last_input = x
         m = []
         for i in range(len(x)): 
-            m.append([determine_membership(x[i], v, self.universe_max[i], self.universe_min[i]) for k, v in self.abcs[i].items()])
+            m.append([determine_membership(x[i], v, self.universe_max[i], self.universe_min[i], self.membership_type) for k, v in self.abcs[i].items()])
         ante = [mem.index(max(mem)) for mem in m]
         self.last_m = m
         self.last_ante = ante
@@ -102,9 +103,10 @@ class _input_layer:
     def check_constraints(self, input_node, key, new_abc):
         check1 = self.keep_relative_order(input_node, key, new_abc)
         check2 = self.always_overlap(input_node, key, new_abc)
+        check3 = self.symmetrical(input_node, key, new_abc)
         
         
-        return check1 and check2
+        return check1 and check2 and check3 
         
     def keep_relative_order(self, input_node, key, new_abc):
         old_sets = self.abcs[input_node]
@@ -126,17 +128,29 @@ class _input_layer:
         
         
         for n,c in enumerate(cs):
-            if c < self.universe_min[n]:
+            if c <= self.universe_min[n]:
                 return False
             if n+1 != self.num_fuzzy_sets:
                 if c < a_s[n+1]:
                     return False
                     
         for n,a in enumerate(a_s):
-            if a > self.universe_max[n]:
+            if a >= self.universe_max[n]:
                 return False
                 
     
+        return True
+        
+    def symmetrical(self, input_node, key, new_abc):
+        old_sets = self.abcs[input_node]
+        old_sets[key] = new_abc
+        
+        
+        for v in old_sets.values():
+            a,b,c = v
+            if not np.allclose(c - b , b-a):
+                return False
+
         return True
 
         

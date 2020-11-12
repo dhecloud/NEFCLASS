@@ -11,7 +11,8 @@ def train(args, labels, train_data, train_targets, test_data, test_targets, univ
     initialize model
     '''
     model = NEFCLASS(num_input_units= args.num_input_units, num_fuzzy_sets=args.num_sets, \
-                    kmax=args.kmax, output_units=args.output_units, universe_max=universe_max, universe_min=universe_min)
+                    kmax=args.kmax, output_units=args.output_units, universe_max=universe_max, universe_min=universe_min,\
+                    membership_type=args.mf)
     abcs = [build_membership_function(train_data[d],labels) for d in range(train_data.shape[1])]
     model.init_fuzzy_sets(abcs)
     
@@ -124,6 +125,8 @@ def main(args):
         terms = load_breast_cancer(args)
     elif args.dataset == 'wbc':
         terms = load_breast_cancer_wisconsin(args)
+    elif args.dataset == 'wine':
+        terms = load_wine(args)
     else:
         print('dataset does not exist')
         assert False
@@ -152,7 +155,7 @@ def main(args):
                 train_acc, test_acc = train(args, labels, train_data, train_targets, test_data, test_targets, universe_max, universe_min, verbose=args.v)
                 cv_train_acc.append(train_acc)
                 cv_test_acc.append(test_acc)
-        print(f'Sigma:{args.sigma}, kmax:{args.kmax}, folds:{args.kfold}, Train: {np.mean(train_acc):.2f}% Test: {np.mean(test_acc):.2f}%')
+        print(f'Sigma:{args.sigma}, kmax:{args.kmax}, num_sets:{args.num_sets}, Train: {np.mean(train_acc):.2f}% Test: {np.mean(test_acc):.2f}%')
     else:    
         train_data, train_targets, test_data, test_targets, universe_max, universe_min = terms
         train(args, labels, train_data, train_targets, test_data, test_targets, universe_max, universe_min, verbose=args.v)
@@ -161,14 +164,15 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='NEFCLASS')
     parser.add_argument('--dataset', default='iris', type=str, help='dataset to load')
-    parser.add_argument('--sigma', default=0.03, type=float, help='learning rate')
+    parser.add_argument('--sigma', default=0.01, type=float, help='learning rate')
     parser.add_argument('--num_epoch', default=500, type=int, help='number of epoch for fuzzy set learning')
     parser.add_argument('--num_sets', default=5, type=int, help='number of fuzzy sets')
-    parser.add_argument('--kmax', default=20, type=int, help='number of fuzzy sets')
+    parser.add_argument('--kmax', default=500, type=int, help='number of fuzzy sets')
     parser.add_argument('--rule_learning', default='original', type=str, help='method to use')
     parser.add_argument('--cv', default=False, action='store_true', help='do 10 fold cross validation?')
     parser.add_argument('--kfold', default=10, type=int, help='number of k fold')
     parser.add_argument('-v', default=False, action='store_true', help='verbosity')
+    parser.add_argument('--mf', default='tri', type=str, help='membership function to use')
     
     args = parser.parse_args()
     main(args)

@@ -5,13 +5,23 @@ def determine_membership(x,abc, max, min, type='tri'):
     a,b,c = abc
     if x <= min or x>= max:
         return 1
-    if a<x and x <=b:
-        return (x-a)/(b-a)
-    elif b<x and x < c:
-        return (c-x)/(c-b)
+    if type == 'tri':
+        if a<x and x <=b:
+            return (x-a)/(b-a)
+        elif b<x and x < c:
+            return (c-x)/(c-b)
+        else:
+            return 0
+            
+    elif type =='gaussian':
+        return a * np.exp(- ((x-b)**2) / (2*c**2))
+    elif type == 'semicircle':
+        r = c - b 
+        y = np.sqrt(r**2 - (x-b)**2)
+        return y
     else:
-        return 0
-    
+        print('mf type not supported')
+        assert False
     # if x < a or x > c:
     #     return 0
     # elif x >= a and x <= b:
