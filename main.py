@@ -3,7 +3,6 @@ from NEFCLASS import *
 from data_loading import *
 import argparse
 import numpy as np 
-from tqdm import tqdm
 seed = 42
 
 def train(args, labels, train_data, train_targets, test_data, test_targets, universe_max, universe_min, verbose=False):
@@ -167,12 +166,12 @@ if __name__ == '__main__':
     parser.add_argument('--sigma', default=0.01, type=float, help='learning rate')
     parser.add_argument('--num_epoch', default=500, type=int, help='number of epoch for fuzzy set learning')
     parser.add_argument('--num_sets', default=5, type=int, help='number of fuzzy sets')
-    parser.add_argument('--kmax', default=500, type=int, help='number of fuzzy sets')
-    parser.add_argument('--rule_learning', default='original', type=str, help='method to use')
+    parser.add_argument('--kmax', default=100, type=int, help='maximum number of rules')
+    parser.add_argument('--rule_learning', default='original', type=str, help='rule learning method to use. Default is the original implementation. Use any other strings as input to perform best per class.')
     parser.add_argument('--cv', default=False, action='store_true', help='do 10 fold cross validation?')
     parser.add_argument('--kfold', default=10, type=int, help='number of k fold')
     parser.add_argument('-v', default=False, action='store_true', help='verbosity')
-    parser.add_argument('--mf', default='tri', type=str, help='membership function to use')
+    parser.add_argument('--mf', default='tri', type=str, help='membership function to use. Default: tri. Options: gaussian, semicircle')
     
     args = parser.parse_args()
     main(args)

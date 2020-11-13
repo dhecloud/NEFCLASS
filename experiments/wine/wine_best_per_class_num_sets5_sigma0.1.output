@@ -1,0 +1,31 @@
+==== start rule learning ====
+maximum of 13 rule learnt per class
+model learnt 24 rules
+Accuracy on training set after rule learning: 16.53%
+==== start fuzzy set learning ====
+Epoch 0: 39.27%
+Epoch 5: 35.76%
+Epoch 10: 43.80%
+Epoch 15: 45.74%
+Epoch 20: 47.40%
+Epoch 25: 51.52%
+Epoch 30: 41.67%
+Epoch 35: 47.34%
+Epoch 40: 46.81%
+Epoch 45: 50.23%
+Epoch 50: 41.61%
+Epoch 55: 39.89%
+Epoch 60: 46.11%
+Epoch 65: 45.34%
+Epoch 70: 47.95%
+Epoch 75: 45.03%
+Epoch 80: 45.89%
+Epoch 85: 41.55%
+Epoch 90: 50.94%
+Epoch 95: 43.34%
+Epoch 100: 36.50%
+Epoch 105: 43.03%
+Epoch 110: 49.31%
+Epoch 115: 42.04%
+Best accuracy 51.74% at epoch 68
+Accuracy on test set after fuzzy set learning: 52.25%
