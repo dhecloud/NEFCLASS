@@ -4,6 +4,7 @@
 This repository implements the neuro-fuzzy [NEFCLASS](https://www.researchgate.net/publication/221000724_NEFCLASS_-_a_neuro-fuzzy_approach_for_the_classification_of_data) model in python
 
 ## Requisites
+First install anaconda onto your system.  
 ```
 conda create -n nefclass python==3.6.10
 conda install pandas scikit-learn
